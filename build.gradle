@@ -1,0 +1,103 @@
+plugins {
+    id 'net.researchgate.release' version '2.6.0'
+    id 'com.jfrog.bintray' version '1.8.1'
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+group 'co.com.tecnio.crudrepository'
+version project.property('version')
+
+def pomConfig = {
+    licenses{
+        name 'The Apache Software License, Version 2.0'
+        url 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+        distribution 'repo'
+    }
+
+    developers {
+        developer {
+            id 'inerbernate'
+            name 'inerjanuer bernate'
+            email 'inerbernate@gmail.com'
+        }
+    }
+
+    scm {
+        url 'https://github.com/inerjanuer/tecnio'
+    }
+
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                from components.java
+                groupId 'co.com.tecnio.crudrepository'
+                artifacId 'crud_repository'
+                version project.property('version')
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', 'Crud repository example ')
+                    root.appendNode('name', 'Crud repository')
+                    root.appendNode('url', 'https://github.com/inerjanuer/tecnio')
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('user') ? project.property('user') : System.getenv('USER')
+    key = project.hasProperty('apiKey') ? project.property('apiKey') : System.getenv('API_KEY')
+    configurations = ['archives']
+    publications = ['MyPublication']
+    pkg {
+        repo = 'tecnio'
+        name = 'es-inerjanuer-tecnio'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/inerjanuer/tecnio.git'
+    }
+}
+
+
+release {
+    failOnCommitNeeded = true
+    failOnPublishNeeded = true
+    failOnSnapshotDependencies = true
+    failOnUnversionedFiles = false
+    failOnUpdateNeeded= true
+    revertOnFail= true
+    preCommitText = ''
+    preTagCommitMessage = '[Gradle Release Plugin] - pre tag commit: '
+    tagCommitMessage = '[Gradle Release Plugin] - creating tag: '
+    newVersionCommitMessage='[Gradle Release Plugin ] - new version commit: '
+    tagTemplate='${version}'
+    versionPropertyFile= 'gradle.properties'
+    scmAdapters = [
+            net.researchgate.release.GitAdapter
+    ]
+
+    git {
+        requireBranch = 'master'
+        pushToRemote = 'origin'
+        pushToBranchPrefix = ''
+        commitVersionFileOnly = false
+    }
+}
+
+afterReleaseBuild.dependsOn tecnioUpload
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}

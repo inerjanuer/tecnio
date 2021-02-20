@@ -7,7 +7,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-group 'co.com.tecnio.crudrepository'
+group 'co.com.tecnio.crudRepository'
 version project.property('version')
 
 def pomConfig = {
@@ -33,7 +33,7 @@ def pomConfig = {
         publications {
             MyPublication(MavenPublication) {
                 from components.java
-                groupId 'co.com.tecnio.crudrepository'
+                groupId 'co.com.tecnio.crudRepository'
                 artifacId 'crud_repository'
                 version project.property('version')
                 pom.withXml {
@@ -55,9 +55,9 @@ bintray {
     publications = ['MyPublication']
     pkg {
         repo = 'tecnio'
-        name = 'es-inerjanuer-tecnio'
+        name = 'tecnio'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/inerjanuer/tecnio.git'
+        vcsUrl = 'https://github.com/inerjanuer/tecnio'
     }
 }
 
@@ -87,7 +87,7 @@ release {
     }
 }
 
-afterReleaseBuild.dependsOn tecnioUpload
+//afterReleaseBuild.dependsOn tecnioUpload
 
 repositories {
     mavenCentral()
